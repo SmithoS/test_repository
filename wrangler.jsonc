@@ -1,11 +1,9 @@
 {
-  // 既存の設定
   "name": "test-repository",
   "compatibility_date": "2026-10-03",
   "assets": {
-    "directory": "./public"
+    "directory": "./public",
   },
-
-  // 追加する設定
+  "preview_urls": true,
   "previews": {}
 }
