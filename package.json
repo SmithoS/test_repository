@@ -10,7 +10,7 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "npm run build && wrangler dev",
-    "cf:deploy": "node scripts/cloudflare-deploy-disabled.mjs",
+    "cf:deploy": "node scripts/cloudflare-production.mjs",
     "cf:preview": "node scripts/cloudflare-preview.mjs"
   },
   "devDependencies": {

@@ -1,6 +1,6 @@
 import { spawnSync } from "node:child_process";
 
-const previewBranch = "staging";
+const previewBranch = "feature/test2";
 const currentBranch = process.env.WORKERS_CI_BRANCH;
 
 if (currentBranch !== previewBranch) {
