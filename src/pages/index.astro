@@ -1,0 +1,152 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+const checks = [
+  ["Astro", "静的 HTML を生成"],
+  ["Workers Assets", "dist を配信"],
+  ["Custom 404", "存在しない URL を確認可能"],
+];
+---
+
+<BaseLayout
+  title="Dummy Workers Lab"
+  description="Astro と Cloudflare Workers のデプロイ検証用ダミーサイトです。"
+>
+  <section class="hero">
+    <p class="eyebrow">ASTRO × CLOUDFLARE WORKERS</p>
+    <h1>壊して試せる、<br /><span>安全な実験場。</span></h1>
+    <p class="lead">
+      このページが表示されていれば、Astro のビルド成果物を Cloudflare Workers
+      から配信できています。本番サイトとは切り離されたダミープロジェクトです。
+    </p>
+    <div class="actions">
+      <a class="primary" href="/about/">構成を確認する</a>
+      <a class="secondary" href="/missing-page/">404 を試す</a>
+    </div>
+  </section>
+
+  <section class="status" aria-labelledby="status-heading">
+    <div>
+      <p class="eyebrow">DEPLOYMENT CHECK</p>
+      <h2 id="status-heading">確認できること</h2>
+    </div>
+    <div class="cards">
+      {checks.map(([name, detail], index) => (
+        <article>
+          <span>0{index + 1}</span>
+          <h3>{name}</h3>
+          <p>{detail}</p>
+        </article>
+      ))}
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .hero {
+    padding: clamp(4rem, 10vw, 8rem) 0 5rem;
+  }
+
+  .eyebrow {
+    margin: 0 0 1rem;
+    color: #fbbf24;
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.18em;
+  }
+
+  h1 {
+    max-width: 880px;
+    margin: 0;
+    font-size: clamp(3.3rem, 9vw, 7.5rem);
+    line-height: 0.98;
+    letter-spacing: -0.065em;
+  }
+
+  h1 span {
+    color: transparent;
+    background: linear-gradient(100deg, #fbbf24, #fb7185 55%, #38bdf8);
+    background-clip: text;
+  }
+
+  .lead {
+    max-width: 680px;
+    margin: 2rem 0 0;
+    color: #94a3b8;
+    font-size: clamp(1rem, 2vw, 1.2rem);
+    line-height: 1.9;
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.8rem;
+    margin-top: 2rem;
+  }
+
+  .actions a {
+    padding: 0.85rem 1.2rem;
+    border: 1px solid #334155;
+    border-radius: 0.75rem;
+    font-weight: 700;
+    text-decoration: none;
+  }
+
+  .actions .primary {
+    color: #111827;
+    border-color: #fbbf24;
+    background: #fbbf24;
+  }
+
+  .actions a:hover,
+  .actions a:focus-visible {
+    transform: translateY(-2px);
+  }
+
+  .status {
+    padding: 3rem 0;
+    border-top: 1px solid #1e293b;
+  }
+
+  h2 {
+    margin: 0;
+    font-size: clamp(2rem, 5vw, 3.4rem);
+    letter-spacing: -0.04em;
+  }
+
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-top: 2rem;
+  }
+
+  article {
+    padding: 1.5rem;
+    border: 1px solid #1e293b;
+    border-radius: 1rem;
+    background: rgb(15 23 42 / 65%);
+  }
+
+  article span {
+    color: #64748b;
+    font-size: 0.75rem;
+    font-weight: 800;
+  }
+
+  article h3 {
+    margin: 2rem 0 0.4rem;
+    font-size: 1.15rem;
+  }
+
+  article p {
+    margin: 0;
+    color: #94a3b8;
+  }
+
+  @media (max-width: 700px) {
+    .cards {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

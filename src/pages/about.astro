@@ -1,0 +1,98 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+
+<BaseLayout
+  title="このサイトについて | Dummy Workers Lab"
+  description="Astro と Cloudflare Workers の検証構成を説明します。"
+>
+  <article class="content">
+    <p class="label">ABOUT THIS LAB</p>
+    <h1>このサイトの役割</h1>
+    <p class="intro">
+      本番サイトを触る前に、Cloudflare Workers のビルド・プレビュー・公開フローを確認するための最小構成です。
+    </p>
+    <dl>
+      <div>
+        <dt>ビルド</dt>
+        <dd>Astro がページを静的な HTML / CSS に変換し、<code>dist</code> に出力します。</dd>
+      </div>
+      <div>
+        <dt>配信</dt>
+        <dd>Wrangler が <code>dist</code> を Workers Assets としてアップロードします。</dd>
+      </div>
+      <div>
+        <dt>サーバー処理</dt>
+        <dd>この検証版では使用しません。SSR が必要になった時点で Cloudflare アダプターを追加します。</dd>
+      </div>
+    </dl>
+    <a class="back" href="/">← ホームへ戻る</a>
+  </article>
+</BaseLayout>
+
+<style>
+  .content {
+    max-width: 780px;
+    padding: clamp(4rem, 9vw, 7rem) 0 3rem;
+  }
+
+  .label {
+    color: #fbbf24;
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.18em;
+  }
+
+  h1 {
+    margin: 0.8rem 0 1.5rem;
+    font-size: clamp(2.8rem, 7vw, 5.5rem);
+    letter-spacing: -0.055em;
+  }
+
+  .intro {
+    color: #94a3b8;
+    font-size: 1.15rem;
+    line-height: 1.9;
+  }
+
+  dl {
+    margin: 3rem 0;
+    border-top: 1px solid #1e293b;
+  }
+
+  dl div {
+    display: grid;
+    grid-template-columns: 9rem 1fr;
+    gap: 1rem;
+    padding: 1.35rem 0;
+    border-bottom: 1px solid #1e293b;
+  }
+
+  dt {
+    color: #f8fafc;
+    font-weight: 800;
+  }
+
+  dd {
+    margin: 0;
+    color: #94a3b8;
+    line-height: 1.7;
+  }
+
+  code {
+    color: #7dd3fc;
+  }
+
+  .back {
+    color: #fbbf24;
+    font-weight: 700;
+    text-decoration: none;
+  }
+
+  @media (max-width: 540px) {
+    dl div {
+      grid-template-columns: 1fr;
+      gap: 0.4rem;
+    }
+  }
+</style>

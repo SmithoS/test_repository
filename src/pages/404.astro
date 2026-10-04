@@ -1,0 +1,50 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+
+<BaseLayout
+  title="404 | Dummy Workers Lab"
+  description="指定されたページは見つかりませんでした。"
+>
+  <section class="not-found">
+    <p>404</p>
+    <h1>ここには何もありません。</h1>
+    <span>カスタム 404 ページの配信確認に成功しました。</span>
+    <a href="/">ホームへ戻る</a>
+  </section>
+</BaseLayout>
+
+<style>
+  .not-found {
+    min-height: 65vh;
+    display: grid;
+    align-content: center;
+    justify-items: start;
+  }
+
+  p {
+    margin: 0;
+    color: #fbbf24;
+    font-size: clamp(5rem, 20vw, 12rem);
+    font-weight: 900;
+    line-height: 0.8;
+    letter-spacing: -0.08em;
+  }
+
+  h1 {
+    margin: 2rem 0 0.8rem;
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    letter-spacing: -0.04em;
+  }
+
+  span {
+    color: #94a3b8;
+  }
+
+  a {
+    margin-top: 2rem;
+    color: #fbbf24;
+    font-weight: 700;
+    text-decoration: none;
+  }
+</style>
