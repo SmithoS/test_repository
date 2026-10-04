@@ -22,7 +22,7 @@ function run(command) {
 }
 
 if (IS_EXECUTE_DEPLOY) {
-  run("npm run build && npm exec wrangler deploy");
+  run("npm run build && npm exec -- wrangler deploy");
 } else {
   console.log("[cloudflare] Production deployment is intentionally disabled.");
   console.log(
