@@ -8,6 +8,7 @@ GitHub への push を起点に、Astro の静的サイトを Cloudflare Workers
 - ビルド成果物は `dist/` に出力されます。
 - Wrangler は `dist/` を Workers Assets として配信します。
 - `main` ブランチへの push を Cloudflare Workers Builds が検知し、自動でビルド・デプロイします。
+- feature ブランチの Preview を作成できるよう、`wrangler.jsonc` に `previews` ブロックを用意しています。
 - SSR や API は使わないため、`@astrojs/cloudflare` と Worker の `main` エントリーは不要です。
 - 存在しない URL では `src/pages/404.astro` から生成したカスタム 404 ページを返します。
 
@@ -80,6 +81,7 @@ Cloudflare ダッシュボードで、接続済み Worker の **Settings > Build
 | `assets.directory` | アップロードする Astro のビルド成果物 |
 | `assets.not_found_handling` | 未知の URL に `404.html` を返す設定 |
 | `preview_urls` | バージョンごとのプレビュー URL を有効化 |
+| `previews` | `wrangler preview` に必要な Preview 用設定。現時点では個別の変数やリソースがないため空オブジェクト |
 
 `name` は接続済み Worker に合わせて元の `test-repository` を維持しています。Cloudflare ダッシュボード上の Worker 名が異なる場合だけ、同じ名前に変更してください。
 
