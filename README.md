@@ -37,13 +37,14 @@ npm run preview
 
 ## GitHub への push で自動デプロイ
 
-Cloudflare ダッシュボードで、接続済み Worker の **Settings > Builds** を開き、次の値になっていることを確認します。
+Cloudflare ダッシュボードで、接続済み Worker の **Settings > Builds** を開き、次の値に設定します。ビルドをデプロイ用スクリプトに含めているため、Cloudflare 側の Build command は空欄にします。
 
 | 項目 | 値 |
 | --- | --- |
 | Production branch | `main` |
-| Build command | `npm run build` |
-| Deploy command | `npx wrangler deploy` |
+| Build command | 未設定（空欄） |
+| Deploy command | `npm run cf:deploy` |
+| Preview command | `npm run cf:preview` |
 | Root directory | 未指定（リポジトリ直下。入力必須の場合は `/`） |
 | Build output directory | 設定不要（`wrangler.jsonc` の `assets.directory` を使用） |
 
@@ -53,8 +54,8 @@ Cloudflare ダッシュボードで、接続済み Worker の **Settings > Build
 
 1. 変更を `main` ブランチへ push する。
 2. Cloudflare Workers Builds が push を検知する。
-3. Cloudflare が依存関係をインストールし、`npm run build` を実行する。
-4. `npx wrangler deploy` が `dist/` を既存の Worker へデプロイする。
+3. Cloudflare が依存関係をインストールし、`npm run cf:deploy` を実行する。
+4. スクリプト内でAstroをビルドした後、Wranglerが `dist/` を既存の Worker へデプロイする。
 5. Cloudflare ダッシュボードの **Builds** で成否とログを確認する。
 
 ローカルで `wrangler login` や `wrangler deploy` を実行する必要はありません。Workers Builds の認証には、Git 連携時に Cloudflare が用意した API トークンが使われます。
@@ -63,7 +64,9 @@ Cloudflare ダッシュボードで、接続済み Worker の **Settings > Build
 
 このリポジトリの本番ブランチは `main` です。`feature/test2` などの別ブランチを push しても、本番 Worker は更新されません。
 
-別ブランチでも動作確認したい場合は、Cloudflare の **Settings > Builds > Branch control** で Preview builds を有効にし、Preview command を `npx wrangler preview` にします。これにより、本番へ反映せずブランチ用 Preview URL で確認できます。
+別ブランチでも動作確認したい場合は、Cloudflare の **Settings > Builds > Branch control** で Preview builds を有効にします。Preview commandには `npm run cf:preview` を指定します。このコマンドはAstroのビルド後に `wrangler preview` を呼ぶため、`dist/` がない状態では実行されません。本番へ反映せず、ブランチ用Preview URLで確認できます。
+
+`wrangler preview` は現在Open Betaのため、実行時に警告が表示されます。これは失敗を示す警告ではなく、Preview URLが作成されれば正常です。
 
 ## 自動デプロイを試す手順
 
