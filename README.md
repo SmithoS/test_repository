@@ -7,8 +7,9 @@ GitHub への push を起点に、Astro の静的サイトを Cloudflare Workers
 - Astro は全ページをビルド時に静的 HTML 化します。
 - ビルド成果物は `dist/` に出力されます。
 - Wrangler は `dist/` を Workers Assets として配信します。
-- `main` ブランチへの push を Cloudflare Workers Builds が検知し、自動でビルド・デプロイします。
-- feature ブランチの Preview を作成できるよう、`wrangler.jsonc` に `previews` ブロックを用意しています。
+- Previewサイトを作成するブランチは `staging` だけです。それ以外の非本番ブランチではデプロイ処理をスキップします。
+- 初回の本番公開が承認されるまで、`main` ブランチのデプロイ処理は意図的に無効化しています。
+- Previewを作成できるよう、`wrangler.jsonc` に `previews` ブロックを用意しています。
 - SSR や API は使わないため、`@astrojs/cloudflare` と Worker の `main` エントリーは不要です。
 - 存在しない URL では `src/pages/404.astro` から生成したカスタム 404 ページを返します。
 
@@ -50,30 +51,39 @@ Cloudflare ダッシュボードで、接続済み Worker の **Settings > Build
 
 リポジトリ直下の `.nvmrc` により、Workers Builds でも Node.js 24 が自動選択されます。
 
-設定後の本番デプロイは次の流れになります。
+### 現在の本番デプロイ状態: 無効
 
-1. 変更を `main` ブランチへ push する。
-2. Cloudflare Workers Builds が push を検知する。
-3. Cloudflare が依存関係をインストールし、`npm run cf:deploy` を実行する。
-4. スクリプト内でAstroをビルドした後、Wranglerが `dist/` を既存の Worker へデプロイする。
-5. Cloudflare ダッシュボードの **Builds** で成否とログを確認する。
+`main`へのpushでCloudflare Workers Buildsは起動しますが、現在の`cf:deploy`はメッセージを出して正常終了するだけです。AstroのビルドやCloudflareへのアップロードは行いません。
+
+既存の本番デプロイがある場合、その内容は削除されず公開されたままです。この設定は、新しい内容への更新だけを停止します。
+
+初回の本番公開が承認されたら、`package.json`の`cf:deploy`を次のように変更して`main`へpushします。
+
+```json
+"cf:deploy": "npm run build && wrangler deploy"
+```
+
+この変更を含むpushで初回の本番デプロイが実行されます。それ以降は`cf:deploy`を戻さず、`main`へpushするたびに自動デプロイされます。
 
 ローカルで `wrangler login` や `wrangler deploy` を実行する必要はありません。Workers Builds の認証には、Git 連携時に Cloudflare が用意した API トークンが使われます。
 
-### feature ブランチの扱い
+### Previewブランチの扱い
 
-このリポジトリの本番ブランチは `main` です。`feature/test2` などの別ブランチを push しても、本番 Worker は更新されません。
+Cloudflareの **Settings > Builds > Branch control** ではPreview buildsを有効にしておきます。非本番ブランチへのpushでCloudflareのビルド処理自体は起動しますが、`cf:preview`が`WORKERS_CI_BRANCH`を確認します。
 
-別ブランチでも動作確認したい場合は、Cloudflare の **Settings > Builds > Branch control** で Preview builds を有効にします。Preview commandには `npm run cf:preview` を指定します。このコマンドはAstroのビルド後に `wrangler preview` を呼ぶため、`dist/` がない状態では実行されません。本番へ反映せず、ブランチ用Preview URLで確認できます。
+- `staging`: Astroをビルドし、`wrangler preview`でPreviewサイトを作成・更新します。
+- `feature/test2`など、それ以外のブランチ: スキップ理由をログに出して正常終了します。Previewサイトは作成しません。
+- `main`: Production branchとして`cf:deploy`が実行されるため、Preview判定の対象外です。
 
 `wrangler preview` は現在Open Betaのため、実行時に警告が表示されます。これは失敗を示す警告ではなく、Preview URLが作成されれば正常です。
 
 ## 自動デプロイを試す手順
 
-1. この変更をコミットする。
-2. 最初は `feature/test2` を push し、Preview builds を有効にしている場合は Preview URL を確認する。
-3. 問題がなければ `main` にマージして push する。
-4. Cloudflare の **Builds** が成功し、Worker の `workers.dev` URLでページが更新されたことを確認する。
+1. 開発内容を`staging`へ反映してpushする。
+2. Cloudflareが作成した`staging`のPreview URLを開発者間で確認する。
+3. 公開が承認されたら、`package.json`の`cf:deploy`を有効なコマンドへ変更する。
+4. 承認済みの内容と`cf:deploy`の変更を`main`へ反映してpushする。
+5. 初回公開後は`cf:deploy`を変更せず、以後は`main`へのpushで自動デプロイする。
 
 ## `wrangler.jsonc` の要点
 
@@ -102,6 +112,9 @@ Cloudflare ダッシュボードで、接続済み Worker の **Settings > Build
 │     ├─ index.astro
 │     ├─ about.astro
 │     └─ 404.astro
+├─ scripts/
+│  ├─ cloudflare-deploy-disabled.mjs
+│  └─ cloudflare-preview.mjs
 ├─ astro.config.mjs
 ├─ package.json
 ├─ tsconfig.json
